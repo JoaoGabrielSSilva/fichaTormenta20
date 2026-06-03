@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tormenta 20 — Gerador de Fichas</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">T<span>O</span>RMENTA <span style="color:var(--crimson-light);font-size:0.6em;vertical-align:super;">20</span></div>
+  <div class="header-sub">Gerador de Fichas de Personagem</div>
+  <div class="header-line"></div>
+</div>
+
+<div class="sheet" id="ficha">
+
+  <!-- ===== TABS ===== -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('identidade')">Identidade</button>
+    <button class="tab-btn" onclick="switchTab('atributos')">Atributos</button>
+    <button class="tab-btn" onclick="switchTab('combate')">Combate</button>
+    <button class="tab-btn" onclick="switchTab('pericias')">Perícias</button>
+    <button class="tab-btn" onclick="switchTab('habilidades')">Habilidades</button>
+    <button class="tab-btn" onclick="switchTab('historia')">História</button>
+  </div>
+
+  <!-- ===== TAB: IDENTIDADE ===== -->
+  <div class="tab-panel active" id="tab-identidade">
+
+    <div class="panel">
+      <div class="section-title">Identificação</div>
+      <div class="id-layout">
+        <div class="id-portrait">
+          <div class="portrait-frame" id="portrait-frame">
+            <img id="portrait-img" alt="Retrato do personagem">
+            <div class="portrait-placeholder" id="portrait-placeholder">
+              <div class="placeholder-icon">🛡</div>
+              <div class="placeholder-text">Sem retrato</div>
+            </div>
+          </div>
+          <div class="portrait-actions">
+            <label for="portrait-upload" class="icon-btn" title="Importar imagem">📎</label>
+            <input type="file" id="portrait-upload" accept="image/*" hidden>
+            <button type="button" class="icon-btn" title="Remover imagem" onclick="removePortrait()">🗑</button>
+          </div>
+        </div>
+        <div class="id-fields">
+          <div class="grid-2">
+            <div class="field-group">
+              <label>Nome do Jogador</label>
+              <input type="text" id="jogador" placeholder="Ex: João Gabriel">
+            </div>
+            <div class="field-group">
+              <label>Nome do Personagem</label>
+              <input type="text" id="personagem" placeholder="Ex: Osteon">
+            </div>
+          </div>
+          <div class="grid-4">
+            <div class="field-group">
+              <label>Raça</label>
+              <input type="text" id="raca" placeholder="Ex: Humano">
+            </div>
+            <div class="field-group">
+              <label>Origem</label>
+              <input type="text" id="origem" placeholder="Ex: Criminoso, Nobre...">
+            </div>
+            <div class="field-group">
+              <label>Classe & Nível</label>
+              <input type="text" id="classe" placeholder="Ex: Bucaneiro Nv. 1">
+            </div>
+            <div class="field-group">
+              <label>Divindade</label>
+              <input type="text" id="divindade" placeholder="Ex: Tanna-Toh">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Aparência & Personalidade</div>
+      <div class="grid-3">
+        <div class="field-group">
+          <label>Idade</label>
+          <input type="text" id="idade" placeholder="Ex: 27 anos">
+        </div>
+        <div class="field-group">
+          <label>Tamanho</label>
+          <select id="tamanho">
+            <option value="">—</option>
+            <option>Minúsculo</option>
+            <option>Pequeno</option>
+            <option>Médio</option>
+            <option>Grande</option>
+            <option>Enorme</option>
+            <option>Colossal</option>
+          </select>
+        </div>
+        
+      </div>
+      <div class="grid-2">
+        <div class="field-group">
+          <label>Aparência Física</label>
+          <textarea id="aparencia" placeholder="Descreva altura, cabelo, olhos, marcas..." rows="3"></textarea>
+        </div>
+        <div class="field-group">
+          <label>Traços de Personalidade</label>
+          <textarea id="personalidade" placeholder="Como seu personagem age, fala, pensa..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="field-group">
+          <label>Ideal</label>
+          <input type="text" id="ideal" placeholder="O que o guia...">
+        </div>
+        <div class="field-group">
+          <label>Vínculo</label>
+          <input type="text" id="vinculo" placeholder="O que ele protege...">
+        </div>
+        <div class="field-group">
+          <label>Fraqueza</label>
+          <input type="text" id="fraqueza" placeholder="Seu ponto fraco...">
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Equipamento & Riqueza</div>
+      <div class="field-group">
+        <label>Equipamentos Carregados</label>
+        <textarea id="equipamento" placeholder="Liste armas, armaduras, itens mágicos e outros pertences..." rows="5"></textarea>
+      </div>
+      <div class="grid-3">
+        <div class="field-group">
+          <label>Tesouro (T$)</label>
+          <input type="number" id="ts" placeholder="0" min="0">
+        </div>
+        <div class="field-group">
+          <label>Ouro (TO)</label>
+          <input type="number" id="to" placeholder="0" min="0">
+        </div>
+        <div class="field-group">
+          <label>Tibar (TIB)</label>
+          <input type="number" id="tib" placeholder="0" min="0">
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-identidade -->
+
+  <!-- ===== TAB: ATRIBUTOS ===== -->
+  <div class="tab-panel" id="tab-atributos">
+
+    <div class="panel">
+      <div class="section-title">Atributos</div>
+      <div class="grid-6" id="attrs-grid">
+        <!-- generated by JS -->
+      </div>
+      <div class="ornament">✦ ✦ ✦</div>
+      <div class="vitals-grid">
+        <div class="vital-box">
+          <div class="vt">❤ Pontos de Vida</div>
+          <div class="vital-inputs">
+            <div>
+              <label>Máximos</label>
+              <input type="number" id="pv-max" placeholder="0" min="0">
+            </div>
+            <div>
+              <label>Atuais</label>
+              <input type="number" id="pv-atual" placeholder="0">
+            </div>
+          </div>
+        </div>
+        <div class="vital-box">
+          <div class="vt" style="color:#1a4a8b;">✦ Pontos de Mana</div>
+          <div class="vital-inputs">
+            <div>
+              <label>Máximos</label>
+              <input type="number" id="pm-max" placeholder="0" min="0">
+            </div>
+            <div>
+              <label>Atuais</label>
+              <input type="number" id="pm-atual" placeholder="0">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Proficiências & Outras Características</div>
+      <div class="field-group">
+        <label>Bônus de Proficiência</label>
+        <input type="number" id="bonus-prof" placeholder="0" style="max-width:100px;">
+      </div>
+      <div class="ornament" style="margin:10px 0;">· · ·</div>
+      <label style="margin-bottom:10px;">Proficiências em Armas & Armaduras</label>
+      <div class="prof-grid" id="prof-grid">
+        <!-- generated by JS -->
+      </div>
+      <div class="field-group" style="margin-top:16px;">
+        <label>Outras Características / Habilidades Raciais</label>
+        <textarea id="outras-caract" placeholder="Anote visão no escuro, resistências, imunidades, habilidades especiais de raça/classe..." rows="4"></textarea>
+      </div>
+    </div>
+
+  </div><!-- /tab-atributos -->
+
+  <!-- ===== TAB: COMBATE ===== -->
+  <div class="tab-panel" id="tab-combate">
+
+    <div class="panel">
+      <div class="section-title">Defesa</div>
+      <div class="defense-row">
+        <div>
+          <label style="text-align:center;display:block;margin-bottom:6px;">Total</label>
+          <div class="def-shield">
+            <input type="number" id="defesa-total" value="10" style="width:52px;font-size:1.5rem;">
+          </div>
+        </div>
+        <span class="def-plus">=</span>
+        <div class="def-part">
+          <div class="field-group">
+            <label>Mod. Destreza</label>
+            <input type="number" id="def-des" placeholder="0" style="text-align:center;" oninput="calcDefesa()">
+          </div>
+        </div>
+        <span class="def-plus">+</span>
+        <div class="def-part">
+          <div class="field-group">
+            <label>Bônus Armadura</label>
+            <input type="number" id="def-arm" placeholder="0" style="text-align:center;" oninput="calcDefesa()">
+          </div>
+        </div>
+        <span class="def-plus">+</span>
+        <div class="def-part">
+          <div class="field-group">
+            <label>Bônus Escudo</label>
+            <input type="number" id="def-esc" placeholder="0" style="text-align:center;" oninput="calcDefesa()">
+          </div>
+        </div>
+        <span class="def-plus">+</span>
+        <div class="def-part">
+          <div class="field-group">
+            <label>Outros</label>
+            <input type="number" id="def-out" placeholder="0" style="text-align:center;" oninput="calcDefesa()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Armadura & Escudo</div>
+      <table class="armor-table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th style="width:90px;">Defesa</th>
+            <th style="width:90px;">Penalidade</th>
+            <th style="width:120px;">Tipo</th>
+          </tr>
+        </thead>
+        <tbody id="armor-body">
+          <!-- 3 rows -->
+        </tbody>
+      </table>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="addArmorRow()">+ Adicionar Armadura/Escudo</button>
+        <button class="btn btn-outline" onclick="removeLastArmorRow()">− Remover Última</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="section-title">Ataques</div>
+      <table class="attacks-table">
+        <thead>
+          <tr>
+            <th>Arma / Ataque</th>
+            <th style="width:110px;">Teste de Ataque</th>
+            <th style="width:90px;">Dano</th>
+            <th style="width:90px;">Crítico</th>
+            <th style="width:90px;">Tipo</th>
+            <th style="width:90px;">Alcance</th>
+          </tr>
+        </thead>
+        <tbody id="attacks-body">
+          <!-- rows generated -->
+        </tbody>
+      </table>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="addAttackRow()">+ Adicionar Ataque</button>
+      </div>
+    </div>
+
+  </div><!-- /tab-combate -->
+
+  <!-- ===== TAB: PERÍCIAS ===== -->
+  <div class="tab-panel" id="tab-pericias">
+    <div class="panel">
+      <div class="section-title">Perícias</div>
+      <div class="skills-grid" id="skills-grid">
+        <!-- generated by JS -->
+      </div>
+      <p style="margin-top:14px;font-size:0.78rem;color:var(--ink-soft);font-style:italic;">
+        ✦ Penalidade de armadura &nbsp;·&nbsp; <sup>®</sup> Somente treinado
+      </p>
+    </div>
+  </div><!-- /tab-pericias -->
+
+  <!-- ===== TAB: HABILIDADES ===== -->
+  <div class="tab-panel" id="tab-habilidades">
+    <div class="panel">
+      <div class="section-title">Habilidades & Magias</div>
+      <div class="field-group">
+        <label>Habilidades de Classe & Raça</label>
+        <textarea id="habilidades" placeholder="Liste habilidades especiais, poderes de classe, poderes raciais, talentos..." rows="8"></textarea>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="section-title">Magias Conhecidas</div>
+      <div id="magias-list">
+        <!-- rows generated -->
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="addMagiaRow()">+ Adicionar Magia</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="section-title">Anotações Gerais</div>
+      <textarea id="notas" placeholder="Notas de campanha, objetivos, segredos descobertos..." rows="6"></textarea>
+    </div>
+  </div><!-- /tab-habilidades -->
+
+  <!-- ===== TAB: HISTÓRIA ===== -->
+  <div class="tab-panel" id="tab-historia">
+    <div class="panel">
+      <div class="section-title">História de Origem</div>
+      <div class="history-paper">
+        <div class="field-group">
+          <label>Onde nasceu e cresceu?</label>
+          <textarea id="hist-origem" placeholder="Descreva o local de nascimento, família, infância..." rows="4"></textarea>
+        </div>
+        <div class="field-group">
+          <label>Evento marcante que moldou o personagem</label>
+          <textarea id="hist-evento" placeholder="Qual acontecimento mudou sua vida e o colocou nessa jornada?" rows="4"></textarea>
+        </div>
+        <div class="field-group">
+          <label>Motivação & Objetivos</label>
+          <textarea id="hist-motivacao" placeholder="O que seu personagem busca? Vingança? Riqueza? Redenção?" rows="3"></textarea>
+        </div>
+        <div class="field-group">
+          <label>Conexões com o Mundo</label>
+          <textarea id="hist-conexoes" placeholder="Aliados, inimigos, organizações, locais importantes para o personagem..." rows="3"></textarea>
+        </div>
+        <div class="field-group">
+          <label>Segredos</label>
+          <textarea id="hist-segredos" placeholder="O que o personagem esconde? Que verdade ele ainda não descobriu sobre si mesmo?" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="section-title">Narrativa Livre</div>
+      <div class="field-group">
+        <label>Conte a história completa com suas palavras</label>
+        <textarea id="hist-completa" placeholder="Escreva a história de origem do personagem em forma de narrativa..." rows="14" style="font-size:1.05rem;line-height:1.75;font-style:italic;"></textarea>
+      </div>
+    </div>
+  </div><!-- /tab-historia -->
+
+  <!-- ===== BOTTOM ACTIONS ===== -->
+  <div class="btn-row" style="border-top:1px solid rgba(139,105,20,0.2);padding-top:20px;margin-top:8px;justify-content:space-between;">
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="saveFicha()">💾 Salvar Localmente</button>
+      <button class="btn btn-outline" onclick="loadFicha()">📂 Carregar</button>
+      <button class="btn btn-outline" onclick="clearFicha()">🗑 Limpar Tudo</button>
+      <button class="btn btn-outline" onclick="toggleMaster()">👁 Modo Mestre</button>
+    </div>
+    <button class="btn" onclick="window.print()">🖨 Imprimir Ficha</button>
+  </div>
+
+</div><!-- /sheet -->
+
+<!-- ===== PAINEL DO MESTRE (LADO DIREITO) ===== -->
+<aside class="master-panel" id="master-panel" aria-hidden="true">
+  <div class="master-header">
+    <div class="master-title">👁 Painel do Mestre</div>
+    <button class="master-close" onclick="toggleMaster()" title="Fechar painel" aria-label="Fechar">×</button>
+  </div>
+  <div class="master-body">
+    <div class="master-section">
+      <div class="master-section-title">Adicionar Ficha de Jogador</div>
+      <p class="master-hint">A ficha atual do formulário será salva como uma ficha de jogador. O nome do personagem é obrigatório.</p>
+      <button class="btn btn-gold master-btn-full" onclick="saveCurrentAsPlayer()">⚔ Salvar Ficha Atual como Jogador</button>
+      <button class="btn btn-outline master-btn-full" id="master-update-btn" onclick="updatePlayerFromCurrent()" style="display:none;">💾 Atualizar Ficha Carregada</button>
+    </div>
+    <div class="master-section">
+      <div class="master-section-title">Fichas Salvas (<span id="player-count">0</span>)</div>
+      <div id="master-list" class="master-list"></div>
+    </div>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
