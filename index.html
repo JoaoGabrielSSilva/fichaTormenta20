@@ -372,14 +372,18 @@
   </div><!-- /tab-historia -->
 
   <!-- ===== BOTTOM ACTIONS ===== -->
-  <div class="btn-row" style="border-top:1px solid rgba(139,105,20,0.2);padding-top:20px;margin-top:8px;justify-content:space-between;">
+  <div class="btn-row" style="border-top: 1px solid rgba(139,105,20,0.2);padding-top: 20px;margin-top: 8px;justify-content:space-between;">
     <div style="display:flex;gap:12px;flex-wrap:wrap;">
-      <button class="btn btn-gold" onclick="saveFicha()">💾 Salvar Localmente</button>
-      <button class="btn btn-outline" onclick="loadFicha()">📂 Carregar</button>
+      <button class="btn btn-gold" onclick="exportJson()">📤 Exportar JSON</button>
+      <label class="btn btn-outline" for="import-json" style="cursor:pointer;">📥 Importar JSON</label>
+      <input type="file" id="import-json" accept=".json" hidden>
       <button class="btn btn-outline" onclick="clearFicha()">🗑 Limpar Tudo</button>
       <button class="btn btn-outline" onclick="toggleMaster()">👁 Modo Mestre</button>
     </div>
-    <button class="btn" onclick="window.print()">🖨 Imprimir Ficha</button>
+    <div style="display:flex;gap:12px;">
+      <button class="btn btn-outline" onclick="exportPdf()">📄 Exportar PDF</button>
+      <button class="btn" onclick="window.print()">🖨 Imprimir Ficha</button>
+    </div>
   </div>
 
 </div><!-- /sheet -->
@@ -406,6 +410,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

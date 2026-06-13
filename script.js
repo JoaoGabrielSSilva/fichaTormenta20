@@ -494,6 +494,212 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+// === EXPORT JSON ===
+function exportJson() {
+  const data = gatherData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const filename = (data.personagem || 'ficha') + '.json';
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Ficha exportada como JSON! 📤');
+}
+
+// === IMPORT JSON ===
+function importJson(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      applyData(data);
+      currentViewId = null;
+      updateUpdateButton();
+      renderMasterList();
+      showToast('Ficha importada com sucesso! 📥');
+    } catch(err) {
+      showToast('Erro ao importar JSON.');
+    }
+  };
+  reader.onerror = () => showToast('Erro ao ler arquivo.');
+  reader.readAsText(file);
+}
+
+// === EXPORT PDF ===
+function exportPdf() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const data = gatherData();
+  
+  // Header
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.setTextColor(139, 26, 26);
+  doc.text('TORMENTA 20', 105, 20, { align: 'center' });
+  doc.setFontSize(12);
+  doc.setTextColor(0, 0, 0);
+  doc.text('FICHA DE PERSONAGEM', 105, 28, { align: 'center' });
+  
+  // Line
+  doc.setLineWidth(0.5);
+  doc.setDrawColor(201, 168, 76);
+  doc.line(20, 32, 190, 32);
+  
+  let y = 42;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(139, 26, 26);
+  doc.text('IDENTIDADE', 20, y);
+  y += 8;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0);
+  
+  const identityFields = [
+    ['Jogador', data.jogador],
+    ['Personagem', data.personagem],
+    ['Raça', data.raca],
+    ['Origem', data.origem],
+    ['Classe & Nível', data.classe],
+    ['Divindade', data.divindade],
+    ['Idade', data.idade],
+    ['Tamanho', data.tamanho],
+  ];
+  
+  identityFields.forEach(([label, value]) => {
+    doc.setFont('helvetica', 'bold');
+    doc.text(label + ':', 20, y);
+    doc.setFont('helvetica', 'normal');
+    doc.text(value || '—', 60, y);
+    y += 6;
+  });
+  
+  // Aparência e Personalidade
+  y += 4;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(139, 26, 26);
+  doc.text('APARÊNCIA & PERSONALIDADE', 20, y);
+  y += 8;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0);
+  doc.text('Aparência Física:', 20, y);
+  y += 5;
+  if (data.aparencia) {
+    const aparenciaLines = doc.splitTextToSize(data.aparencia, 170);
+    aparenciaLines.forEach(line => {
+      doc.text(line, 20, y);
+      y += 5;
+    });
+  } else {
+    doc.text('—', 20, y);
+    y += 5;
+  }
+  y += 2;
+  doc.setFont('helvetica', 'bold');
+  doc.text('Traços de Personalidade:', 20, y);
+  y += 5;
+  doc.setFont('helvetica', 'normal');
+  if (data.personalidade) {
+    const personalidadeLines = doc.splitTextToSize(data.personalidade, 170);
+    personalidadeLines.forEach(line => {
+      doc.text(line, 20, y);
+      y += 5;
+    });
+  } else {
+    doc.text('—', 20, y);
+    y += 5;
+  }
+  
+  // Atributos
+  if (y > 250) {
+    doc.addPage();
+    y = 20;
+  }
+  y += 4;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(139, 26, 26);
+  doc.text('ATRIBUTOS', 20, y);
+  y += 8;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0);
+  ATTRS.forEach(attr => {
+    const score = data['attr-' + attr.id];
+    const mod = Math.floor(((parseInt(score) || 10) - 10) / 2);
+    doc.setFont('helvetica', 'bold');
+    doc.text(attr.full + ':', 20, y);
+    doc.setFont('helvetica', 'normal');
+    doc.text((score || '10') + ' (Mod: ' + (mod >= 0 ? '+' : '') + mod + ')', 60, y);
+    y += 6;
+  });
+  
+  // Vida e Mana
+  y += 4;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(139, 26, 26);
+  doc.text('VITAIS', 20, y);
+  y += 8;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0);
+  doc.text('Pontos de Vida: ' + (data['pv-atual'] || '0') + '/' + (data['pv-max'] || '0'), 20, y);
+  y += 6;
+  doc.text('Pontos de Mana: ' + (data['pm-atual'] || '0') + '/' + (data['pm-max'] || '0'), 20, y);
+  
+  // Defesa
+  y += 8;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(139, 26, 26);
+  doc.text('DEFESA', 20, y);
+  y += 8;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0);
+  const defTotal = data['defesa-total'] || '10';
+  doc.text('Total: ' + defTotal, 20, y);
+  y += 6;
+  doc.text('Mod. Des: ' + (data['def-des'] || '0') + ' + Armadura: ' + (data['def-arm'] || '0') + ' + Escudo: ' + (data['def-esc'] || '0') + ' + Outros: ' + (data['def-out'] || '0'), 20, y);
+  
+  // Equipamento
+  if (y > 250) {
+    doc.addPage();
+    y = 20;
+  }
+  y += 8;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(139, 26, 26);
+  doc.text('EQUIPAMENTO & RIQUEZA', 20, y);
+  y += 8;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0);
+  if (data.equipamento) {
+    const equipLines = doc.splitTextToSize(data.equipamento, 170);
+    equipLines.forEach(line => {
+      doc.text(line, 20, y);
+      y += 5;
+    });
+  }
+  y += 4;
+  doc.text('Tesouro (T$): ' + (data.ts || '0'), 20, y);
+  y += 6;
+  doc.text('Ouro (TO): ' + (data.to || '0'), 20, y);
+  y += 6;
+  doc.text('Tibar (TIB): ' + (data.tib || '0'), 20, y);
+  
+  const filename = (data.personagem || 'ficha') + '.pdf';
+  doc.save(filename);
+  showToast('Ficha exportada como PDF! 📄');
+}
+
 // === INIT ===
 function init() {
   renderAttrs();
@@ -517,6 +723,16 @@ function init() {
       } catch(err) {
         showToast('Erro ao carregar imagem.');
       }
+    });
+  }
+  // import json
+  const importInput = document.getElementById('import-json');
+  if(importInput) {
+    importInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if(!file) return;
+      importJson(file);
+      importInput.value = '';
     });
   }
   // auto-load
